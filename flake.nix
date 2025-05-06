@@ -2,22 +2,29 @@
   description = "The flake for html_test";
 
   outputs =
-    { nixpkgs, ... }:
-    let
-      package = {
-        pname = "html_test";
-        version = "0.1.0";
-        src = ./.;
-        cargoLock.lockFile = ./Cargo.lock;
-      };
-    in
+    { self, nixpkgs }:
     {
-      packages = {
-        x86_64-linux.default = nixpkgs.legacyPackages.x86_64-linux.rustPlatform.buildRustPackage package;
-        x86_64-darwin.default = nixpkgs.legacyPackages.x86_64-darwin.rustPlatform.buildRustPackage package;
-        aarch64-linux.default = nixpkgs.legacyPackages.aarch64-linux.rustPlatform.buildRustPackage package;
-        aarch64-darwin.default = nixpkgs.legacyPackages.aarch64-darwin.rustPlatform.buildRustPackage package;
-      };
+      packages =
+        nixpkgs.lib.genAttrs
+          [
+            "x86_64-linux"
+            "aarch64-linux"
+            "x86_64-darwin"
+            "armv6l-linux"
+            "armv7l-linux"
+            "i686-linux"
+            "aarch64-darwin"
+            "powerpc64le-linux"
+            "riscv64-linux"
+          ]
+          (system: {
+            default = nixpkgs.legacyPackages.${system}.rustPlatform.buildRustPackage {
+              pname = "html_test";
+              version = "0.1.0";
+              src = ./.;
+              cargoLock.lockFile = ./Cargo.lock;
+            };
+          });
       nixosModules.default =
         { config, lib, ... }:
         let
@@ -35,7 +42,7 @@
               description = "Serves a simple HTML file";
               wantedBy = [ "multi-user.target" ];
               after = [ "network.target" ];
-              path = [ package ];
+              path = [ self.packages.${builtins.currentSystem}.default ];
               serviceConfig = {
                 ExecStart = "/usr/bin/env html_test";
                 Restart = "always";
