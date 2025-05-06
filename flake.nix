@@ -21,7 +21,7 @@
       nixosModules.default =
         { config, lib, ... }:
         let
-          cfg = config.options.services.html-test;
+          cfg = config.services.html-test;
         in
         {
           options = {
