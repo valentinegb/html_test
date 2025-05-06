@@ -4,7 +4,7 @@
   outputs =
     { nixpkgs, ... }:
     let
-      package = nixpkgs.rustPlatform.buildRustPackage {
+      package = {
         pname = "html_test";
         version = "0.1.0";
         src = ./.;
@@ -13,10 +13,10 @@
     in
     {
       packages = {
-        x86_64-linux.default = package;
-        x86_64-darwin.default = package;
-        aarch64-linux.default = package;
-        aarch64-darwin.default = package;
+        x86_64-linux.default = nixpkgs.legacyPackages.x86_64-linux.rustPlatform.buildRustPackage package;
+        x86_64-darwin.default = nixpkgs.legacyPackages.x86_64-darwin.rustPlatform.buildRustPackage package;
+        aarch64-linux.default = nixpkgs.legacyPackages.aarch64-linux.rustPlatform.buildRustPackage package;
+        aarch64-darwin.default = nixpkgs.legacyPackages.aarch64-darwin.rustPlatform.buildRustPackage package;
       };
       nixosModules.default =
         { config, lib, ... }:
