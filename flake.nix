@@ -30,7 +30,12 @@
             };
           });
       nixosModules.default =
-        { config, lib, ... }:
+        {
+          config,
+          lib,
+          pkgs,
+          ...
+        }:
         let
           cfg = config.services.html-test;
         in
@@ -46,7 +51,7 @@
               description = "Serves a simple HTML file";
               wantedBy = [ "multi-user.target" ];
               after = [ "network.target" ];
-              path = [ self.packages.${builtins.currentSystem}.default ];
+              path = [ self.packages.${pkgs.system}.default ];
               serviceConfig = {
                 ExecStart = "/usr/bin/env html_test";
                 Restart = "always";
