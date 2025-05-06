@@ -4,3 +4,5 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+axum = { version = "0.8.4", default-features = false, features = ["http1", "http2", "tokio"] }
+tokio = { version = "1.44.2", default-features = false, features = ["macros", "net", "rt-multi-thread"] }
